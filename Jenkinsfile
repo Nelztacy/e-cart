@@ -54,6 +54,7 @@ pipeline {
         stage('Artifact Build') {
             steps {
                 sh "mvn package -DskipTests=true"
+                sh 'ls -l target'
             }
         }
         
