@@ -57,21 +57,27 @@ pipeline {
                 sh 'ls -l target'
             }
         }
-        
-        
-        // stage('Artifact Build') {
-        //     steps {
-        //         sh "mvn package -DskipTests=true"
-        //         sh 'ls -l target' // List the contents of the target directory to verify the artifact
-        //     }
-        //     post {
-        //         success {
-        //             echo 'Now Archiving'
-        //             archiveArtifacts artifacts: '**/*.war'
-        //         }
-        //     }
-        // }
 
+        stage("Upload Artifacts to Nexus"){
+        steps{
+           nexusArtifactUploader(
+              nexusVersion: 'nexus3',
+              protocol: 'http',
+              nexusUrl: '10.0.0.116:8081',
+              groupId: 'webapp',
+              version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
+              repository: 'maven-project-releases',  //"${NEXUS_REPOSITORY}",
+              credentialsId: "${NEXUS_CREDENTIAL_ID}",
+              artifacts: [
+                  [artifactId: 'webapp',
+                  classifier: '',
+                  file: "${WORKSPACE}/webapp/target/webapp.war",
+                  type: 'war']
+              ]
+           )
+        }
+    }
+        
         // stage('Nexus Artifact Uploader') {
         //     steps {
         //         script {
