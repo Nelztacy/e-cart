@@ -40,26 +40,5 @@ pipeline {
                 }
             }
         }
-        
-        stage('OWASP Dependencies Check') {
-            steps {
-        dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'DP-Check'
-        dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-            }
-        }
-        
-        stage('Artifact Build') {
-            steps {
-                sh "mvn package -DskipTests=true"
-            }
-        }
-        
-        stage('Deploy Artifacts to Nexus') {
-            steps {
-                withMaven(globalMavenSettingsConfig: 'global-maven', jdk: 'jdk 17', maven: 'localMaven', mavenSettingsConfig: '', traceability: true) {
-                sh "mvn deploy -DskipTests=true"
-                }
-            }
-        }
     }
 }
