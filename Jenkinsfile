@@ -9,6 +9,7 @@ pipeline {
 
     environment {
         SCANNER_HOME = tool name: 'sonar-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+        NEXUS_CREDENTIAL_ID = 'NEXUS_CREDENTIAL_ID'
     }
     
     stages {
