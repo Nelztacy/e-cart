@@ -58,7 +58,7 @@ pipeline {
             steps {
                 withMaven(globalMavenSettingsConfig: 'global-maven', jdk: 'jdk 17', maven: 'localMaven', mavenSettingsConfig: '', traceability: true) {
                 sh "mvn deploy -DskipTests=true"
-                       }
+                }
             }
         }
     }
