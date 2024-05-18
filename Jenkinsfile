@@ -54,15 +54,22 @@ pipeline {
         stage('Artifact Build') {
             steps {
                 sh "mvn package -DskipTests=true"
-                sh 'ls -l target' // List the contents of the target directory to verify the artifact
-            }
-            post {
-                success {
-                    echo 'Now Archiving'
-                    archiveArtifacts artifacts: '**/*.war'
-                }
             }
         }
+        
+        
+        // stage('Artifact Build') {
+        //     steps {
+        //         sh "mvn package -DskipTests=true"
+        //         sh 'ls -l target' // List the contents of the target directory to verify the artifact
+        //     }
+        //     post {
+        //         success {
+        //             echo 'Now Archiving'
+        //             archiveArtifacts artifacts: '**/*.war'
+        //         }
+        //     }
+        // }
 
         // stage('Nexus Artifact Uploader') {
         //     steps {
