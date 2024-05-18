@@ -54,12 +54,24 @@ pipeline {
             }
         }
 
-        stage('Deploy Artifacts to Nexus') {
-            steps {
-                withMaven(globalMavenSettingsConfig: 'global-maven', jdk: 'jdk 17', maven: 'localMaven', mavenSettingsConfig: '', traceability: true) {
-                sh "mvn deploy -DskipTests=true"
-                       }
-            }
+        stage("Nexus Artifact Uploader"){
+        steps{
+           nexusArtifactUploader(
+              nexusVersion: 'nexus3',
+              protocol: 'http',
+              nexusUrl: '10.0.0.116:8081',
+              groupId: 'webapp',
+              version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
+              repository: 'maven-project-releases',  //"${NEXUS_REPOSITORY}",
+              credentialsId: "${NEXUS_CREDENTIAL_ID}",
+              artifacts: [
+                  [artifactId: 'webapp',
+                  classifier: '',
+                  file: "${WORKSPACE}/webapp/target/webapp.war",
+                  type: 'war']
+              ]
+           )
         }
+    }
     }
 }
