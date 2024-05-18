@@ -67,7 +67,7 @@ pipeline {
         stage('Nexus Artifact Uploader') {
             steps {
                 script {
-                    def warFile = "${WORKSPACE}/target/webapp.war"
+                    def warFile = "${WORKSPACE}/var/lib/jenkins/workspace.war"
                     if (fileExists(warFile)) {
                         nexusArtifactUploader(
                             nexusVersion: 'nexus3',
