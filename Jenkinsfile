@@ -4,12 +4,12 @@ pipeline {
     tools {
         maven 'localMaven'
         jdk 'jdk 17'
+        // No need to declare SonarQubeScanner here, we'll handle it in the environment block
     }
 
     environment {
         SCANNER_HOME = tool name: 'sonar-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
         NEXUS_CREDENTIAL_ID = 'NEXUS_CREDENTIAL_ID'
-        WORKSPACE = "${env.WORKSPACE}"
     }
     
     stages {
@@ -34,61 +34,46 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sona-ecart') {
-                    sh '''
-                        $SCANNER_HOME/bin/sonar-scanner \
-                        -Dsonar.projectKey=ECART \
-                        -Dsonar.projectName=ECART \
-                        -Dsonar.java.binaries=.
-                    '''
+                    sh '''$SCANNER_HOME/bin/sonar-scanner \
+                          -Dsonar.projectKey=ECART \
+                          -Dsonar.projectName=ECART \
+                          -Dsonar.java.binaries=. '''
                 }
             }
         }
         
         stage('OWASP Dependencies Check') {
             steps {
-                dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'DP-Check'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+        dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'DP-Check'
+        dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
 
         stage('Artifact Build') {
             steps {
                 sh "mvn package -DskipTests=true"
-                sh 'ls -l target' // List the contents of the target directory to verify the artifact
-            }
-            post {
-                success {
-                    echo ' now Archiving '
-                    archiveArtifacts artifacts: '**/*.war'
-                }
+                sh 'ls -l target'
             }
         }
 
-        stage('Nexus Artifact Uploader') {
-            steps {
-                script {
-                    def warFile = "${WORKSPACE}/target/webapp.war"
-                    if (fileExists(warFile)) {
-                        nexusArtifactUploader(
-                            nexusVersion: 'nexus3',
-                            protocol: 'http',
-                            nexusUrl: '10.0.0.116:8081',
-                            groupId: 'webapp',
-                            version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
-                            repository: 'maven-project-releases',
-                            credentialsId: "${NEXUS_CREDENTIAL_ID}",
-                            artifacts: [
-                                [artifactId: 'webapp',
-                                 classifier: '',
-                                 file: warFile,
-                                 type: 'war']
-                            ]
-                        )
-                    } else {
-                        error "File ${warFile} does not exist"
-                    }
-                }
-            }
+        stage("Nexus Artifact Uploader"){
+        steps{
+           nexusArtifactUploader(
+              nexusVersion: 'nexus3',
+              protocol: 'http',
+              nexusUrl: '10.0.0.116:8081',
+              groupId: 'webapp',
+              version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
+              repository: 'maven-project-releases',  //"${NEXUS_REPOSITORY}",
+              credentialsId: "${NEXUS_CREDENTIAL_ID}",
+              artifacts: [
+                  [artifactId: 'webapp',
+                  classifier: '',
+                  file: "${WORKSPACE}/webapp/target/webapp.war",
+                  type: 'war']
+              ]
+           )
         }
+    }
     }
 }
