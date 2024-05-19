@@ -106,7 +106,32 @@ pipeline {
                     }
                 }
             }
+        }
 
+        stage('Build & Tag Docker Image') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        sh "docker build -t nelzone/ecart:latest -f docker/Dockerfile ."
+                    }
+                }
+            }
+        }
+
+        stage('Trivy Scan') {
+            steps {
+                sh "trivy image nelzone/ecart:latest > trivy-report.txt "
+            }
+        }
+
+        stage('Push Docker Image to DockerHub') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        sh "docker push nelzone/ecart:latest"
+                    }
+                }
+            }
         }
     }
 }
