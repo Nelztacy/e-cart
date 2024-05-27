@@ -136,7 +136,6 @@ pipeline {
 
         stage('Kubernetes Deployment') {
             steps {
-                #kubeconfig(credentialsId: 'Kubernetes-Cred', serverUrl: 'https://10.0.0.90:6443') {
                 kubeconfig(caCertificate: '''-----BEGIN CERTIFICATE-----
 MIIDBTCCAe2gAwIBAgIICKNt9xSsr3kwDQYJKoZIhvcNAQELBQAwFTETMBEGA1UE
 AxMKa3ViZXJuZXRlczAeFw0yNDA0MDQxNDIzNTBaFw0zNDA0MDIxNDI4NTBaMBUx
