@@ -137,6 +137,8 @@ pipeline {
         stage('Kubernetes Deployment') {
             steps {
                 kubeconfig(credentialsId: 'Kubernetes-Cred', serverUrl: 'https://10.0.0.90:6443') {
+                    sh "kubectl apply -f deploymentservice.yml"
+                    sh "kubectl get svc -n jenkins"
             }
         }
     }
