@@ -136,7 +136,27 @@ pipeline {
 
         stage('Kubernetes Deployment') {
             steps {
-                kubeconfig(credentialsId: 'Kubernetes-Cred', serverUrl: 'https://10.0.0.90:6443') {
+                #kubeconfig(credentialsId: 'Kubernetes-Cred', serverUrl: 'https://10.0.0.90:6443') {
+                kubeconfig(caCertificate: '''-----BEGIN CERTIFICATE-----
+MIIDBTCCAe2gAwIBAgIICKNt9xSsr3kwDQYJKoZIhvcNAQELBQAwFTETMBEGA1UE
+AxMKa3ViZXJuZXRlczAeFw0yNDA0MDQxNDIzNTBaFw0zNDA0MDIxNDI4NTBaMBUx
+EzARBgNVBAMTCmt1YmVybmV0ZXMwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK
+AoIBAQDI0MJ7PKnmvkYk0GZSdICfl3Hc5srVxX0n9pxO2e+IgiZpFgQ55bO6Q2Kz
+ATJGqkFUMQNMTFQbrK997uLalt5hU+AhkXFqLctUa+ZFI4dxQsMQryOfz9B4+6gN
+5ojQFb1NxQ+2lQ+fFd3bso+xxuoaLhe5T6FIR+0KW0DSYsaxrV5KU9WBC5glELEA
+W4ELjUpMkjHcqRHLxZqvLks652pksJP3bTd6zv3MyGN8bzHE7aG53MdI7hYbUEsR
+kKSuWCsLNL+Myf4GFAvI5R5Bs7UYaKZPfIIfC8Lci4BgeP/QFwtrhHbOIYSky/c1
+tdoXTfMAR/0ZCIIbLVfxMrCkXT3FAgMBAAGjWTBXMA4GA1UdDwEB/wQEAwICpDAP
+BgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBTvRhgVwPLPlY6jJvu32aU0panN0TAV
+BgNVHREEDjAMggprdWJlcm5ldGVzMA0GCSqGSIb3DQEBCwUAA4IBAQC06Hqx4QNF
+BpmcA6/pJLt88xJ69dHDH5Xdtzz9AlWtdIg2n3kyPZCyzyNHeeqG5VbU8voEU10h
+fAqVoMwoA0MRDnPMfiDw/R9VdwPUWnGWjOO2JU/oDtTHJ1LlnWSRby/MHsmi6RkN
+dwpO0BGHoH4JmGWe/pjrE7iqLsEiNdQWoO09C5Hg99xtWTvPiA2rtmNzir9MjD08
+0k6kKYfstsLI0/bItw1BB74ZvFqH8E3j6V5Bm+kPHXd+y4WzxU1UIgqvIlULHM5j
+fdcRwhZ6eJ/WBEdow5cD6Vo9yyxkzYHD40tB/YQVMNz8gHNAe6gndAyTkSItQ+qf
+jQ27NGxgyI6Z
+-----END CERTIFICATE-----''', credentialsId: 'Kubernetes-Cred', serverUrl: 'https://10.0.0.90:6443') {
+    }
                     sh "kubectl apply -f deploymentservice.yml"
                     sh "kubectl get svc -n jenkins"
             }
