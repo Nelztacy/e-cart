@@ -133,5 +133,11 @@ pipeline {
                 }
             }
         }
+
+        stage('Kubernetes Deployment') {
+            steps {
+                kubeconfig(credentialsId: 'Kubernetes-Cred', serverUrl: 'https://10.0.0.90:6443') {
+            }
+        }
     }
 }
