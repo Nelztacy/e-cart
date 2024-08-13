@@ -28,7 +28,7 @@ metadata: # Metadata of the resource kind we are creating
   name: ecart-ssvc
 spec:
   selector:
-    app: ekart
+    app: ecart
   ports:
     - protocol: "TCP"
       port: 8070 # The port that the service is running on in the cluster
